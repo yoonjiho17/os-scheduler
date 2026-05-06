@@ -228,7 +228,7 @@ input, select {
 .proc-table th:nth-child(6), .proc-table td:nth-child(6) { width: 40px; }
 
 .proc-table th {
-  text-align: left;
+  text-align: center;
   font-weight: 600;
   color: var(--muted);
   font-size: 12px;
@@ -524,7 +524,15 @@ input, select {
 }
 
 /* ===================== Result table ===================== */
+.result-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
 .result-head {
+  flex: 0 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -543,6 +551,8 @@ input, select {
   color: #8a6d1d;
 }
 .result-table-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
   max-height: 280px;
   overflow: auto;
   scrollbar-color: var(--line) transparent;
@@ -686,7 +696,7 @@ input, select {
   padding: 18px 20px;
   width: min(1200px, 100%);
   max-height: 90vh;
-  overflow: auto;
+  overflow: hidden;
   box-shadow: 0 20px 50px rgba(0,0,0,0.25);
   display: flex;
   flex-direction: column;
@@ -698,6 +708,12 @@ input, select {
   align-items: center;
 }
 .modal__title { font-weight: 700; font-size: 17px; }
+.modal .result-card--expanded {
+  flex: 1 1 auto;
+}
+.modal .result-card--expanded .result-table-wrap {
+  max-height: none;
+}
 
 /* ===================== Hamster animations ===================== */
 .hamster {
@@ -707,8 +723,6 @@ input, select {
 .hamster--run {
   object-fit: cover;
   object-position: center bottom;
-  transform-origin: center center;
-  animation: wheel-run-tilt 0.5s step-end infinite;
 }
 .hamster--idle {
   object-fit: cover;
@@ -716,10 +730,6 @@ input, select {
 }
 .hamster--sleep { animation: chew 0.45s ease-in-out infinite alternate; }
 @keyframes bob { to { transform: translateY(-2px); } }
-@keyframes wheel-run-tilt {
-  0%, 49.999% { transform: rotate(20deg); }
-  50%, 100% { transform: rotate(-20deg); }
-}
 @keyframes chew { to { transform: rotate(-3deg); } }
 
 /* ===================== Splash ===================== */

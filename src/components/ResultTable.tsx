@@ -31,7 +31,7 @@ export default function ResultTable({
   const metricByPid = new Map(metrics.map((m) => [m.pid, m]));
 
   return (
-    <section className="card">
+    <section className={`card result-card ${expanded ? "result-card--expanded" : ""}`}>
       <div className="result-head">
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <span aria-hidden>🐹</span>
@@ -47,10 +47,7 @@ export default function ResultTable({
         )}
       </div>
 
-      <div
-        className="result-table-wrap"
-        style={expanded ? { maxHeight: "70vh" } : undefined}
-      >
+      <div className="result-table-wrap">
         <table className="result-table">
           <thead>
             <tr>
