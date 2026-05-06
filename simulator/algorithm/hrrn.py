@@ -131,16 +131,16 @@ class HRRN:
         total_ntt = 0.0
 
         for p in sorted(processes, key=lambda x: x.pid):
-            tt = max(0.0, float(completion_time[p.pid] - p.arrival_time))
-            bt = float(calc_bt[p.pid])
-            wt = max(0.0, tt - bt)
+            tt = max(0, completion_time[p.pid] - p.arrival_time)
+            bt = calc_bt[p.pid]
+            wt = max(0, tt - bt)
             ntt = tt / bt if bt > 0 else 0.0
 
             total_wt += wt
             total_ntt += ntt
 
             process_metrics.append(
-                ProcessMetric(pid=p.pid, at=p.arrival_time, tt=tt, wt=wt, ntt=ntt)
+                ProcessMetric(pid=p.pid, bt=bt, at=p.arrival_time, tt=tt, wt=wt, ntt=ntt)
             )
 
         n = len(processes)

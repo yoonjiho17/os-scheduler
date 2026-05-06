@@ -73,8 +73,8 @@ export default function ResultTable({
                   <td>{p.name}</td>
                   <td>{p.arrivalTime}</td>
                   <td>{m && status === "done" ? m.bt : "—"}</td>
-                  <td>{m && status === "done" ? m.tt.toFixed(1) : "—"}</td>
-                  <td>{m && status === "done" ? m.wt.toFixed(1) : "—"}</td>
+                  <td>{m && status === "done" ? m.tt : "—"}</td>
+                  <td>{m && status === "done" ? m.wt : "—"}</td>
                   <td>{m && status === "done" ? m.ntt.toFixed(2) : "—"}</td>
                   <td><span className={`status ${s.cls}`}>{s.label}</span></td>
                 </tr>

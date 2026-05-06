@@ -151,13 +151,13 @@ class SPN:
         total_ntt = 0.0
         for process in sorted(processes, key=lambda x: x.pid):
             at = process.arrival_time
-            tt = max(0.0, float(completion_time[process.pid] - at))
-            bt = float(calc_bt[process.pid])
-            wt = max(0.0, tt - bt)
+            tt = max(0, completion_time[process.pid] - at)
+            bt = calc_bt[process.pid]
+            wt = max(0, tt - bt)
             ntt = tt / bt if bt > 0 else 0.0
             total_wt += wt
             total_ntt += ntt
-            process_metrics.append(ProcessMetric(pid=process.pid, at=at, tt=tt, wt=wt, ntt=ntt))
+            process_metrics.append(ProcessMetric(pid=process.pid, bt=bt, at=at, tt=tt, wt=wt, ntt=ntt))
 
         process_count = len(processes)
         avg_wt = total_wt / process_count if process_count else 0.0

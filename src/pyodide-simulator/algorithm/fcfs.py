@@ -150,9 +150,9 @@ class FCFS:
         for process in sorted(processes, key=lambda x: x.pid):
             bt = calc_bt[process.pid]
             at = process.arrival_time
-            tt = max(0.0, float(completion_time[process.pid] - at))
-            wt = max(0.0, tt - bt)
-            ntt = max(1.0, tt / bt)
+            tt = max(0, completion_time[process.pid] - at)
+            wt = max(0, tt - bt)
+            ntt = tt / bt if bt > 0 else 0.0
             total_wt += wt
             total_ntt += ntt
             process_metrics.append(ProcessMetric(pid=process.pid, bt=bt, at=at, tt=tt, wt=wt, ntt=ntt))

@@ -17,7 +17,6 @@ class SRTN:
         ready_queue: 도착해서 실행 대기 중인 작업(FIFO)
         timeline: 렌더링용 실행 블록 결과
         completion_time: pid별 완료 시각(메트릭 계산용)
-        calc_bt: pid별 실행 시간(메트릭 계산용)
         priority_cores: 같은 시각에는 P 코어를 먼저 배정
         runtime: 코어별 현재 실행 상태
         """
@@ -29,7 +28,6 @@ class SRTN:
         ready_queue: deque[Process] = deque([])
         timeline: list[ExecutionBlock] = []
         completion_time: dict[str, int] = {}
-        calc_bt: dict[str, int] = {p.pid: 0 for p in processes}
         priority_cores = sorted(cores, key=lambda c: 0 if c.core_type == "P" else 1)
         runtime = {
             c.core_id: ProcessorRuntime(
@@ -41,7 +39,7 @@ class SRTN:
             )
             for c in priority_cores
         }
-        return remain_queue, ready_queue, timeline, completion_time, calc_bt, priority_cores, runtime
+        return remain_queue, ready_queue, timeline, completion_time, priority_cores, runtime
 
     def _has_running_core(self, priority_cores: list[Core], runtime: dict) -> bool:
         """현재 실행 중인 코어가 하나라도 있는지 확인"""
@@ -142,7 +140,6 @@ class SRTN:
         runtime: dict,
         timeline: list[ExecutionBlock],
         completion_time: dict[str, int],
-        calc_bt: dict[str, int],
         time: int,
     ) -> None:
         """
@@ -175,9 +172,6 @@ class SRTN:
             else:
                 processed_work = processable_work
 
-            # 실제 걸린 시간 계산
-            calc_bt[process.pid] += 1
-
             # 남은 일 업데이트
             core_runtime.remaining_work = remaining_work - processed_work
             process.p_remaining_work = core_runtime.remaining_work # tick 실행 직후에 프로세스 객체에도 값을 실시간으로 써줌.
@@ -205,24 +199,29 @@ class SRTN:
         self,
         processes: list[Process],
         timeline: list[ExecutionBlock],
-        calc_bt: dict[str, int],
         completion_time: dict[str, int],
     ) -> ScheduleResult:
         """
-                완료 시각 기준으로 프로세스 메트릭을 계산해 결과를 생성
-                TT = completion - arrival
-                WT = max(0, TT - burst)
-                NTT = max(1, TT / burst)
-                """
+        완료 시각 기준으로 프로세스 메트릭을 계산해 결과를 생성
+        TT = completion - arrival
+        WT = max(0, TT - burst)
+        NTT = max(1, TT / burst)
+        """
+        calc_bt: dict[str, int] = {p.pid: 0 for p in processes}
+        for block in timeline:
+            if block.pid is None:
+                continue
+            calc_bt[block.pid] += block.end_time - block.start_time
+
         process_metrics: list[ProcessMetric] = []
         total_wt = 0.0
         total_ntt = 0.0
         for process in sorted(processes, key=lambda x: x.pid):
             bt = calc_bt[process.pid]
             at = process.arrival_time
-            tt = max(0.0, float(completion_time[process.pid] - at))
-            wt = max(0.0, tt - bt)
-            ntt = max(1.0, tt / bt)
+            tt = max(0, completion_time[process.pid] - at)
+            wt = max(0, tt - bt)
+            ntt = tt / bt if bt > 0 else 0.0
             total_wt += wt
             total_ntt += ntt
             process_metrics.append(ProcessMetric(pid=process.pid, bt=bt, at=at, tt=tt, wt=wt, ntt=ntt))
@@ -247,7 +246,6 @@ class SRTN:
             ready_queue,
             timeline,
             completion_time,
-            calc_bt,
             priority_cores,
             runtime,
         ) = self._init_runtime(processes, cores)
@@ -268,11 +266,11 @@ class SRTN:
             # 2) idle 코어에 할당
             self._assign_to_idle_cores(priority_cores, runtime, ready_queue, time)
             # 3) 1초 실행
-            self._tick_execute(priority_cores, runtime, timeline, completion_time, calc_bt, time)
+            self._tick_execute(priority_cores, runtime, timeline, completion_time, time)
             # 4) 다음 tick
             time += 1
 
         # 전체 완료 시각 저장
         self.max_time = time
-        return self._build_result(processes, timeline, calc_bt, completion_time)
+        return self._build_result(processes, timeline, completion_time)
 
