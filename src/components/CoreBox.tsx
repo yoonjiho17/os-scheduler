@@ -1,11 +1,11 @@
-import { CPU_COLORS, PROCESS_COLORS, READY_QUEUE_VISIBLE } from "../constants";
+import { CPU_COLORS, PROCESS_COLORS, READY_QUEUE_VISIBLE, type AlgorithmId } from "../constants";
 import type { CoreUI, ProcessUI } from "../state";
 import type { SimState } from "./AlgorithmPanel";
 import Hamster from "./Hamster";
 import hamsterSeedImg from "../asset/HamsterSeed.png";
 
 interface CoreBoxProps {
-  // ... (rest of props)
+  algorithm: AlgorithmId;
   cores: CoreUI[];
   setCores: (next: CoreUI[]) => void;
   processes: ProcessUI[];
@@ -113,8 +113,14 @@ export default function CoreBox(props: CoreBoxProps) {
                       <Hamster
                         bg={color.bg}
                         border={color.border}
-                        size={24}
-                        variant={(readyPriorityByPid.get(proc.pid) ?? 0) >= 60 ? "fat" : "idle"}
+                        size={32}
+                        variant={
+                          algorithm === "diet"
+                            ? "diet-ready"
+                            : (readyPriorityByPid.get(proc.pid) ?? 0) >= 60
+                              ? "fat"
+                              : "idle"
+                        }
                       />
                       <span className="pid-pill" style={{ background: color.pill }}>{proc.pid}</span>
                     </>
@@ -138,8 +144,13 @@ export default function CoreBox(props: CoreBoxProps) {
                 const color = PROCESS_COLORS[proc.colorIdx % PROCESS_COLORS.length];
                 return (
                   <span key={pid} style={{ display: "inline-flex", alignItems: "center" }}>
-                    <Hamster bg={color.bg} border={color.border} size={26} variant="sleep" />
-                    <img src={hamsterSeedImg} alt="seed" className="sleep__seed-img" />
+                    <Hamster 
+                      bg={color.bg} 
+                      border={color.border} 
+                      size={34} 
+                      variant={algorithm === "diet" ? "diet-sleep" : "sleep"} 
+                    />
+                    {algorithm !== "diet" && <img src={hamsterSeedImg} alt="seed" className="sleep__seed-img" />}
                   </span>
                 );
               })

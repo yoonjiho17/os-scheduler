@@ -156,6 +156,7 @@ export default function App() {
           />
         </div>
         <CoreBox
+          algorithm={algorithm}
           cores={cores}
           setCores={setCores}
           processes={processes}

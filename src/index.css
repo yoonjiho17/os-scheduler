@@ -100,6 +100,7 @@ input, select {
   gap: 14px;
   align-items: stretch;
   min-height: 0;
+  flex: 0 0 auto;
 }
 
 .combined-panel {
@@ -108,6 +109,7 @@ input, select {
   gap: 14px;
   padding: 14px 16px;
   overflow: hidden;
+  min-height: 480px;
 }
 
 .combined-panel__divider {
@@ -115,6 +117,12 @@ input, select {
   width: 1px;
   height: calc(100%);
   
+}
+
+.process-panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .algo-panel {
@@ -210,7 +218,15 @@ input, select {
   border-collapse: separate;
   border-spacing: 0 3px;
   font-size: 12.5px;
+  table-layout: fixed;
 }
+.proc-table th:nth-child(1), .proc-table td:nth-child(1) { width: 50px; }
+.proc-table th:nth-child(2), .proc-table td:nth-child(2) { width: auto; }
+.proc-table th:nth-child(3), .proc-table td:nth-child(3) { width: 60px; }
+.proc-table th:nth-child(4), .proc-table td:nth-child(4) { width: 60px; }
+.proc-table th:nth-child(5), .proc-table td:nth-child(5) { width: 60px; }
+.proc-table th:nth-child(6), .proc-table td:nth-child(6) { width: 40px; }
+
 .proc-table th {
   text-align: left;
   font-weight: 600;
@@ -304,9 +320,10 @@ input, select {
 }
 .algo-panel__buttons {
   display: flex;
-  flex-direction:column;
+  flex-direction: column;
   margin-top: auto;
   align-items: center;
+  gap: 10px;
 }
 .algo-panel__buttons .btn { width: fit-content; min-width: 140px; }
 
@@ -319,11 +336,11 @@ input, select {
 .cpu {
   border: 1.5px dashed var(--line);
   border-radius: 20px;
-  padding: 18px;
+  padding: 10px 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   background: var(--card);
   position: relative;
 }
@@ -449,8 +466,9 @@ input, select {
   align-items: center;
 }
 .queue__cell {
-  width: 52px;
-  height: 56px;
+  width: 64px;
+  height: 72px;
+
   border-radius: 12px;
   background: #fff;
   border: 1px solid var(--line);
@@ -485,7 +503,7 @@ input, select {
   display: flex;
   gap: 4px;
   flex-wrap: wrap;
-  min-height: 56px;
+  min-height: 72px;
   align-items: center;
 }
 .sleep__empty {
@@ -525,7 +543,7 @@ input, select {
   color: #8a6d1d;
 }
 .result-table-wrap {
-  max-height: 320px;
+  max-height: 280px;
   overflow: auto;
   scrollbar-color: var(--line) transparent;
   scrollbar-width: thin;
@@ -552,7 +570,17 @@ input, select {
   border-collapse: separate;
   border-spacing: 0 5px;
   font-size: 13px;
+  table-layout: fixed;
 }
+.result-table th:nth-child(1), .result-table td:nth-child(1) { width: 50px; }
+.result-table th:nth-child(2), .result-table td:nth-child(2) { width: auto; }
+.result-table th:nth-child(3), .result-table td:nth-child(3) { width: 45px; }
+.result-table th:nth-child(4), .result-table td:nth-child(4) { width: 45px; }
+.result-table th:nth-child(5), .result-table td:nth-child(5) { width: 45px; }
+.result-table th:nth-child(6), .result-table td:nth-child(6) { width: 45px; }
+.result-table th:nth-child(7), .result-table td:nth-child(7) { width: 50px; }
+.result-table th:nth-child(8), .result-table td:nth-child(8) { width: 85px; }
+
 .result-table th {
   font-size: 12px;
   font-weight: 600;
@@ -601,8 +629,7 @@ input, select {
   margin-bottom: 6px;
 }
 .gantt__time-row span {
-  justify-self: end;
-  transform: translateX(50%);
+  justify-self: start;
   line-height: 1;
 }
 .gantt__row {
